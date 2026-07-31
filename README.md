@@ -112,10 +112,7 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 
 ## 📚 Resources I'm Using
 
-### Sysmon & Windows Logging
-- [Sysmon (Microsoft Sysinternals)](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
-- [SwiftOnSecurity Sysmon Config](https://github.com/SwiftOnSecurity/sysmon-config)
-- [Olaf Hartong's Sysmon Modular Config](https://github.com/olafhartong/sysmon-modular)
+### Windows Logging
 - [Microsoft — Advanced Audit Policy Configuration](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/audit-policy-recommendations)
 - [Windows Security Event Log Encyclopedia (Ultimate Windows Security)](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 
@@ -124,8 +121,6 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 - [Linux auditd Guide (Red Hat)](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening)
 
 ### Log Shipping (Elastic Stack)
-- [Winlogbeat Reference](https://www.elastic.co/guide/en/beats/winlogbeat/current/index.html)
-- [Filebeat Reference](https://www.elastic.co/guide/en/beats/filebeat/current/index.html)
 - [Elastic — Ingesting Windows Event Logs](https://www.elastic.co/guide/en/beats/winlogbeat/current/how-winlogbeat-works.html)
 
 ### Networking & Lab Setup
