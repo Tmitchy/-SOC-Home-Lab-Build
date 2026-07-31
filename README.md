@@ -1,5 +1,5 @@
 <h1 align="center">🖥️ SOC Home Lab — Build & Log Forwarding Plan</h1>
-<h3 align="center">Phase 1: Environment Setup — Getting logs flowing before the SIEM goes in</h3>
+<h3 align="center">Phase 1: Environment Setup- Getting logs flowing before the SIEM goes in</h3>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Stage-Environment_Build-blue?style=for-the-badge"/>
