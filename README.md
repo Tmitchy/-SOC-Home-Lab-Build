@@ -32,14 +32,14 @@ To ensure a SIEM generates meaningful alerts, it must first receive consistent, 
 
 ```mermaid
 graph TD
-    A[Windows 11 Endpoint] -->|Event Logs / Sysmon| S[SIEM-Elastic Search]
+    A[Windows 11 Endpoint] -->|Event Logs / Sysmon| S[SIEM - Elastic Search]
     B[Windows Server - AD/DNS] -->|Security & AD Logs| S
     C[Ubuntu Server] -->|Syslog / auditd| S
     D[Ubuntu Desktop] -->|Syslog| S
     S --> E[Dashboards & Detection Rules]
 ```
 
-The SIEM box itself isn't built yet — this phase is about making sure every VM is *ready to forward* the moment it's introduced.
+The SIEM box itself isn't built this phase yet; it's about making sure every VM is *ready to forward* the moment it's introduced.
 
 ---
 
@@ -61,7 +61,7 @@ The SIEM box itself isn't built yet — this phase is about making sure every VM
 ---
 
 ### 🪟 Windows Server (Domain Controller)
-**Goal:** Capture authentication and directory-service events — the backbone of most SOC detections.
+**Goal:** Capture authentication and directory-service events, the backbone of most SOC detections.
 
 - Enable **Advanced Audit Policy** (not just legacy auditing):
   - Logon/Logoff events (4624, 4625, 4634)
@@ -142,7 +142,7 @@ The SIEM box itself isn't built yet — this phase is about making sure every VM
 
 ## 🔜 Next Document: SIEM Introduction
 
-The next write-up in this series will cover standing up the SIEM (Elastic or Splunk), pointing each log shipper above at it, and building the first dashboards and detection rules from this log data.
+The next write-up in this series will focus on setting up the SIEM (Elasticsearch), linking each Elastic Agent/Defend (Native EDR Telemetry) to it, and creating the initial dashboards and detection rules based on this log data.
 
 ---
 
