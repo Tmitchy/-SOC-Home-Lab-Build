@@ -11,7 +11,7 @@
 
 ## 📋 Purpose
 
-Before any SIEM can generate meaningful alerts, it needs consistent, well-configured log sources feeding it. This document covers **Stage 1** of my SOC lab build: standing up the operating systems, and configuring each one so it's ready to ship logs once the SIEM is introduced in the next phase.
+To ensure a SIEM generates meaningful alerts, it must first receive consistent and well-configured log sources. This document addresses **Stage 1** of my SOC lab build: setting up the operating systems and configuring each one to be ready to send logs when the SIEM is introduced in the next phase.
 
 ---
 
@@ -21,7 +21,7 @@ Before any SIEM can generate meaningful alerts, it needs consistent, well-config
 |---|---|---|---|
 | 1 | **Windows 11** | Endpoint / Workstation | Simulates a user endpoint — where phishing, malware execution, and user-behavior events originate |
 | 2 | **Windows Server** | Domain Controller / Server | Active Directory, DNS, authentication logs — the "crown jewel" logs in most real SOCs |
-| 3 | **Ubuntu Server** | Linux Server | Simulates backend/infra services — SSH, sudo, and service logs |
+| 3 | **Ubuntu Server** | Linux Server | Simulates backend/infra services — SSH, sudo, and service logs | "Where the Elastic Stack SIEM is located and where Kibana and Logstash are configured."
 | 4 | **Ubuntu (Desktop Image)** | Linux Endpoint | Comparison point to the Windows endpoint — cross-platform log normalization practice |
 
 > All VMs run on **VirtualBox**, networked on an internal/host-only adapter so traffic stays isolated from my home network.
@@ -48,16 +48,16 @@ The SIEM box itself isn't built yet — this phase is about making sure every VM
 ### 🪟 Windows 11 (Endpoint)
 **Goal:** Capture process creation, network connections, and user activity at the endpoint level.
 
-- Install **Sysmon** with a solid config (e.g. SwiftOnSecurity or Olaf Hartong's config) to log:
+- Install **Elastic Agent/Defend (Native EDR Telemetry)** with a solid config to log:
   - Process creation (Event ID 1)
   - Network connections (Event ID 3)
   - Image/DLL loads (Event ID 7)
-- Enable **PowerShell Script Block Logging** (catches obfuscated/malicious scripts)
-- Install a log shipper — planning to use **Winlogbeat** (pairs naturally with Elastic) to forward:
   - Security log
   - Sysmon operational log
   - PowerShell operational log
 
+- Enable **PowerShell Script Block Logging** (catches obfuscated/malicious scripts)
+  
 ---
 
 ### 🪟 Windows Server (Domain Controller)
@@ -68,7 +68,7 @@ The SIEM box itself isn't built yet — this phase is about making sure every VM
   - Account management (4720, 4726, etc.)
   - Kerberos ticket events (4768, 4769) — useful for later detecting things like Kerberoasting
 - Enable **DNS debug/analytic logging** for visibility into resolution requests
-- Same **Winlogbeat** shipper plan as the Windows 11 box, pointed at:
+- Same **Elastic Agent/Defend (Native EDR Telemetry)** plan as the Windows 11 box, pointed at:
   - Security log
   - DNS Server log
   - Directory Service log
@@ -82,7 +82,7 @@ The SIEM box itself isn't built yet — this phase is about making sure every VM
 - Install **auditd** for deeper visibility:
   - `sudo`/`su` usage
   - File integrity on sensitive paths (`/etc/passwd`, `/etc/shadow`)
-- Log shipper: **Filebeat**, forwarding:
+- **Elastic Agent/Defend (Native EDR Telemetry)**, forwarding:
   - `auth.log`
   - `syslog`
   - `audit.log`
@@ -93,18 +93,18 @@ The SIEM box itself isn't built yet — this phase is about making sure every VM
 **Goal:** A lighter-weight Linux endpoint for comparison against the Windows 11 box.
 
 - Same **rsyslog** baseline as the server
-- **Filebeat** forwarding auth and syslog only (no server-specific services to monitor)
+- **Elastic Agent/Defend (Native EDR Telemetry)** forwarding auth
 - Used mainly to practice normalizing Linux vs. Windows log formats once they hit the SIEM
 
 ---
 
 ## ✅ Readiness Checklist (before SIEM is introduced)
 
-- [ ] Sysmon installed & configured on Windows 11
+- [ ] Elastic Agent/Defend (Native EDR Telemetry) installed & configured on Windows 11
 - [ ] Advanced Audit Policy enabled on Windows Server
-- [ ] Winlogbeat installed on both Windows boxes (not yet pointed anywhere)
+- [ ] Elastic Agent/Defend (Native EDR Telemetry) installed on both Windows boxes (not yet pointed anywhere)
 - [ ] auditd installed & rules applied on Ubuntu Server
-- [ ] Filebeat installed on both Ubuntu boxes (not yet pointed anywhere)
+- [ ] Elastic Agent/Defend (Native EDR Telemetry) installed on both Ubuntu boxes (not yet pointed anywhere)
 - [ ] All 4 VMs confirmed reachable on the internal lab network
 - [ ] Static IPs assigned to each VM for consistent log source identification
 
