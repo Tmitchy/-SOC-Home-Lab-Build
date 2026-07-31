@@ -11,7 +11,7 @@
 
 ## 📋 Purpose
 
-To ensure a SIEM generates meaningful alerts, it must first receive consistent and well-configured log sources. This document addresses **Stage 1** of my SOC lab build: setting up the operating systems and configuring each one to be ready to send logs when the SIEM is introduced in the next phase.
+To ensure a SIEM generates meaningful alerts, it must first receive consistent, well-configured log data. This document addresses **Stage 1** of my SOC lab build: setting up the operating systems and configuring each one to send logs when the SIEM is introduced in the next phase.
 
 ---
 
@@ -19,10 +19,10 @@ To ensure a SIEM generates meaningful alerts, it must first receive consistent a
 
 | # | OS | Role in Lab | Purpose |
 |---|---|---|---|
-| 1 | **Windows 11** | Endpoint / Workstation | Simulates a user endpoint — where phishing, malware execution, and user-behavior events originate |
-| 2 | **Windows Server** | Domain Controller / Server | Active Directory, DNS, authentication logs — the "crown jewel" logs in most real SOCs |
+| 1 | **Windows 11** | Endpoint / Workstation | Simulates a user endpoint where phishing, malware execution, and user-behavior events originate |
+| 2 | **Windows Server** | Domain Controller / Server | Active Directory, DNS, authentication logs, the "crown jewel" logs in most real SOCs |
 | 3 | **Ubuntu Server** | Linux Server | Simulates backend/infra services — SSH, sudo, and service logs | "Where the Elastic Stack SIEM is located and where Kibana and Logstash are configured."
-| 4 | **Ubuntu (Desktop Image)** | Linux Endpoint | Comparison point to the Windows endpoint — cross-platform log normalization practice |
+| 4 | **Ubuntu (Desktop Image)** | Linux Endpoint | Comparison point to the Windows endpoint cross-platform log normalization practice |
 
 > All VMs run on **VirtualBox**, networked on an internal/host-only adapter so traffic stays isolated from my home network.
 
