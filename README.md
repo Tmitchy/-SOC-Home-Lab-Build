@@ -15,7 +15,7 @@ To ensure a SIEM generates meaningful alerts, it must first receive consistent, 
 
 ---
 
-## 🧱 Lab Inventory — Virtual Machines
+## 🧱 Lab Inventory - Virtual Machines
 
 | # | OS | Role in Lab | Purpose |
 |---|---|---|---|
