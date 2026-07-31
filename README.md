@@ -32,7 +32,7 @@ Before any SIEM can generate meaningful alerts, it needs consistent, well-config
 
 ```mermaid
 graph TD
-    A[Windows 11 Endpoint] -->|Event Logs / Sysmon| S[SIEM - TBD]
+    A[Windows 11 Endpoint] -->|Event Logs / Sysmon| S[SIEM-Elastic Search]
     B[Windows Server - AD/DNS] -->|Security & AD Logs| S
     C[Ubuntu Server] -->|Syslog / auditd| S
     D[Ubuntu Desktop] -->|Syslog| S
