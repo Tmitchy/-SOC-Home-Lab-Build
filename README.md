@@ -11,7 +11,7 @@
 
 ## 📋 Purpose
 
-To ensure a SIEM generates meaningful alerts, it must first receive consistent, well-configured log data. This document addresses **Stage 1** of my SOC lab build: setting up the operating systems and configuring each one to send logs when the SIEM is introduced in the next phase.
+To ensure a SIEM generates meaningful alerts, it must first receive consistent, well-configured log data. This document addresses **Stage 1** of my SOC lab build: setting up the operating systems and configuring each one to send logs for the SIEM in the next phase.
 
 ---
 
@@ -131,7 +131,7 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 - [MITRE ATT&CK Framework](https://attack.mitre.org/)
 - [Sigma Rules Repository](https://github.com/SigmaHQ/sigma)
 
-> This list will keep growing as the lab progresses — new resources get added as I hit new problems.
+> This list will keep growing as the lab progresses - new resources get added as I hit new problems.
 
 ---
 
