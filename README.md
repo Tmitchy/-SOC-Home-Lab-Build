@@ -115,6 +115,8 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
   - `syslog`
   - `audit.log`
 
+[Ubuntu Server](https://github.com/Tmitchy/-SOC-Home-Lab-Build/blob/main/images/Ubuntu%20Server.png)
+
 ---
 
 #### 🐧 Ubuntu Desktop (Image)
