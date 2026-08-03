@@ -58,6 +58,19 @@ graph TD
 The SIEM box itself isn't built in this phase yet; it's about making sure every VM is *ready to forward* the moment it's introduced.
 
 ---
+## 🔥 Firewall — Perimeter Configuration & Logging
+
+**Goal:** Every packet that reaches an endpoint passes through here first — this is the earliest point in the lab where I can see attempted access, not just what already landed on a host.
+
+- Deploying **pfSense** as a virtual appliance, sitting between the lab's internal network and the outside (host-only/NAT boundary)
+- Configuring baseline **firewall rules**:
+  - Default-deny inbound, explicit allow rules per VM/service
+  - Segmenting the Windows Server (DC) and Ubuntu Server onto a restricted internal subnet, separate from the two endpoints
+- Enabling **logging on both blocked and allowed traffic** — blocked traffic shows attempted access; allowed traffic gives a baseline of "normal" to compare against later
+- Turning on the **pfSense package for log export** (planning to use the built-in syslog forwarding) so logs can ship out the same way the OS logs do
+- Log shipper: forwarding via **syslog** to the SIEM once it's introduced — no separate agent needed, since pfSense speaks syslog natively
+
+---
 
 ### ⚙️ Per-OS Configuration Plan
 
