@@ -7,6 +7,12 @@
   <img src="https://img.shields.io/badge/Platform-VirtualBox-183A61?style=for-the-badge&logo=virtualbox&logoColor=white"/>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white"/>
+   <img src="https://img.shields.io/badge/pfSense-212121?style=for-the-badge"/>
+</p>  
+     
 ---
 
 ## 📋 Purpose
@@ -14,38 +20,48 @@
 To ensure a SIEM generates meaningful alerts, it must first receive consistent, well-configured log data. This document addresses **Stage 1** of my SOC lab build: setting up the operating systems and configuring each one to send logs for the SIEM in the next phase.
 
 ---
+## Stage 1 - Complete
 
-## 🧱 Lab Inventory - Virtual Machines
+Four virtual machines have been deployed and configured on an isolated VirtualBox network. The environment is now prepared for centralized log collection during the next phase.
+
+---
+### 🧱 Lab Inventory - Virtual Machines
 
 | # | OS | Role in Lab | Purpose |
 |---|---|---|---|
-| 1 | **Windows 11** | Endpoint / Workstation | Simulates a user endpoint where phishing, malware execution, and user-behavior events originate |
-| 2 | **Windows Server** | Domain Controller / Server | Active Directory, DNS, authentication logs, the "crown jewel" logs in most real SOCs |
-| 3 | **Ubuntu Server** | Linux Server | Simulates backend/infra services — SSH, sudo, and service logs | "Where the Elastic Stack SIEM is located and where Kibana and Logstash are configured."
-| 4 | **Ubuntu (Desktop Image)** | Linux Endpoint | Comparison point to the Windows endpoint cross-platform log normalization practice |
+| 1 | **pfSense Firewall** | Perimeter / Gateway | Sits at the edge of the lab network, filtering and is the first log source that shows *what tried to get in* before it ever reaches an endpoint |
+| 2 | **Windows 11** | Endpoint / Workstation | Simulates a user endpoint where phishing, malware execution, and user-behavior events originate |
+| 3 | **Windows Server** | Domain Controller / Server | Active Directory, DNS, authentication logs, the "crown jewel" logs in most real SOCs |
+| 4 | **Ubuntu Server** | Linux Server | Simulates backend/infra services — SSH, sudo, and service logs | "Where the Elastic Stack SIEM is located and where Kibana and Logstash are configured."
+| 5 | **Ubuntu (Desktop Image)** | Linux Endpoint | Comparison point to the Windows endpoint cross-platform log normalization practice |
 
 > All VMs run on **VirtualBox**, networked on an internal/host-only adapter so traffic stays isolated from my home network.
 
 ---
 
-## 🌐 Planned Network Layout
+### 🌐 Planned Network Layout
 
 ```mermaid
 graph TD
-    A[Windows 11 Endpoint] -->|Event Logs| S[SIEM - Elastic Search]
-    B[Windows Server - AD/DNS] -->|Security & AD Logs| S
-    C[Ubuntu Server] -->|Syslog / auditd| S
-    D[Ubuntu Desktop] -->|Syslog| S
+    F[pfSense Firewall - Perimeter] -->|Firewall/Traffic Logs| S[SIEM - TBD]
+    F --> A[Windows 11 Endpoint]
+    F --> B[Windows Server - AD/DNS]
+    F --> C[Ubuntu Server]
+    F --> D[Ubuntu Desktop]
+    A -->|Event Logs / Sysmon| S
+    B -->|Security & AD Logs| S
+    C -->|Syslog / auditd| S
+    D -->|Syslog| S
     S --> E[Dashboards & Detection Rules]
 ```
 
-The SIEM box itself isn't built this phase yet; it's about making sure every VM is *ready to forward* the moment it's introduced.
+The SIEM box itself isn't built in this phase yet; it's about making sure every VM is *ready to forward* the moment it's introduced.
 
 ---
 
-## ⚙️ Per-OS Configuration Plan
+### ⚙️ Per-OS Configuration Plan
 
-### 🪟 Windows 11 (Endpoint)
+#### 🪟 Windows 11 (Endpoint)
 **Goal:** Capture process creation, network connections, and user activity at the endpoint level.
 
 - Install **Elastic Agent/Defend (Native EDR Telemetry)** with a solid config to log:
@@ -60,7 +76,7 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
   
 ---
 
-### 🪟 Windows Server (Domain Controller)
+#### 🪟 Windows Server (Domain Controller)
 **Goal:** Capture authentication and directory-service events, the backbone of most SOC detections.
 
 - Enable **Advanced Audit Policy** (not just legacy auditing):
@@ -75,7 +91,7 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 
 ---
 
-### 🐧 Ubuntu Server
+#### 🐧 Ubuntu Server
 **Goal:** Capture authentication, privilege escalation, and service-level activity.
 
 - Configure **rsyslog** to centralize local logs (`/var/log/auth.log`, `/var/log/syslog`)
@@ -89,7 +105,7 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 
 ---
 
-### 🐧 Ubuntu Desktop (Image)
+#### 🐧 Ubuntu Desktop (Image)
 **Goal:** A lighter-weight Linux endpoint for comparison against the Windows 11 box.
 
 - Same **rsyslog** baseline as the server
@@ -98,36 +114,36 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 
 ---
 
-## ✅ Readiness Checklist (before SIEM is introduced)
+### ✅ Progress... (before SIEM is introduced)
 
-- [ ] Elastic Agent/Defend (Native EDR Telemetry) installed & configured on Windows 11
+- [x] Elastic Agent/Defend (Native EDR Telemetry) installed & configured on Windows 11
 - [ ] Advanced Audit Policy enabled on Windows Server
 - [ ] Elastic Agent/Defend (Native EDR Telemetry) installed on both Windows boxes (not yet pointed anywhere)
 - [ ] auditd installed & rules applied on Ubuntu Server
-- [ ] Elastic Agent/Defend (Native EDR Telemetry) installed on both Ubuntu boxes (not yet pointed anywhere)
-- [ ] All 4 VMs confirmed reachable on the internal lab network
-- [ ] Static IPs assigned to each VM for consistent log source identification
+- [x] Elastic Agent/Defend (Native EDR Telemetry) installed on both Ubuntu boxes (not yet pointed anywhere)
+- [x] All 5 VMs confirmed reachable on the internal lab network
+- [x] Static IPs assigned to each VM for consistent log source identification
 
 ---
 
-## 📚 Resources I'm Using
+### 📚 Resources I'm Using
 
-### Windows Logging
+#### Windows Logging
 - [Microsoft — Advanced Audit Policy Configuration](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/audit-policy-recommendations)
 - [Windows Security Event Log Encyclopedia (Ultimate Windows Security)](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 
-### Linux Logging
+#### Linux Logging
 - [rsyslog Documentation](https://www.rsyslog.com/doc/)
 - [Linux auditd Guide (Red Hat)](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening)
 
-### Log Shipping (Elastic Stack)
+#### Log Shipping (Elastic Stack)
 - [Elastic — Ingesting Windows Event Logs](https://www.elastic.co/guide/en/beats/winlogbeat/current/how-winlogbeat-works.html)
 
-### Networking & Lab Setup
+#### Networking & Lab Setup
 - [VirtualBox Networking Modes Explained](https://www.virtualbox.org/manual/ch06.html)
 - [Active Directory Home Lab Setup Guide](https://adsecurity.org/?page_id=41)
 
-### Detection Engineering (for later phases)
+#### Detection Engineering (for later phases)
 - [MITRE ATT&CK Framework](https://attack.mitre.org/)
 - [Sigma Rules Repository](https://github.com/SigmaHQ/sigma)
 
@@ -135,7 +151,7 @@ The SIEM box itself isn't built this phase yet; it's about making sure every VM 
 
 ---
 
-## 🔜 Next Document: SIEM Introduction
+### 🔜 Next Document: SIEM Introduction
 
 The next write-up in this series will focus on setting up the SIEM (Elasticsearch), linking each Elastic Agent/Defend (Native EDR Telemetry) to it, and creating the initial dashboards and detection rules based on this log data.
 
