@@ -32,7 +32,7 @@ Four virtual machines have been deployed and configured on an isolated VirtualBo
 | 1 | **pfSense Firewall** | Perimeter / Gateway | Sits at the edge of the lab network, filtering and is the first log source that shows *what tried to get in* before it ever reaches an endpoint |
 | 2 | **Windows 11** | Endpoint / Workstation | Simulates a user endpoint where phishing, malware execution, and user-behavior events originate |
 | 3 | **Windows Server** | Domain Controller / Server | Active Directory, DNS, authentication logs, the "crown jewel" logs in most real SOCs |
-| 4 | **Ubuntu Server** | Linux Server | Simulates backend/infra services — SSH, sudo, and service logs | "Where the Elastic Stack SIEM is located and where Kibana and Logstash are configured."
+| 4 | **Ubuntu Server** | Linux Server | Simulates backend/infra services - SSH, sudo, and service logs | "Where the Elastic Stack SIEM is located and where Kibana and Logstash are configured."
 | 5 | **Ubuntu (Desktop Image)** | Linux Endpoint | Comparison point to the Windows endpoint cross-platform log normalization practice |
 
 > All VMs run on **VirtualBox**, networked on an internal/host-only adapter so traffic stays isolated from my home network.
