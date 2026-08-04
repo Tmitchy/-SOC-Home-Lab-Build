@@ -99,7 +99,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 - Enable **Advanced Audit Policy** (not just legacy auditing):
   - Logon/Logoff events (4624, 4625, 4634)
   - Account management (4720, 4726, etc.)
-  - Kerberos ticket events (4768, 4769) — useful for later detecting things like Kerberoasting
+  - Kerberos ticket events (4768, 4769) - useful for later detecting things like Kerberoasting
 - Enable **DNS debug/analytic logging** for visibility into resolution requests
 - Same **Elastic Agent/Defend (Native EDR Telemetry)** plan as the Windows 11 box, pointed at:
   - Security log
