@@ -176,7 +176,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 ---
 
 ### 🔜 Next Document: 
-[**SIEM Introduction (stage-2)**](https://github.com/Tmitchy/SIEM-Introduction)
+[**SIEM Introduction (Stage-2)**](https://github.com/Tmitchy/SIEM-Introduction)
 
 The next write-up in this series will focus on setting up the SIEM (Elasticsearch), linking each Elastic Agent/Defend (Native EDR Telemetry) to it, and creating the initial dashboards and detection rules based on this log data.
 
