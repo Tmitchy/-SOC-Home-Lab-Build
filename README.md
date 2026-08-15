@@ -73,7 +73,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 - Turning on the **pfSense package for log export** (planning to use the built-in syslog forwarding) so logs can ship out the same way the OS logs do
 - Log shipper: forwarding via **syslog** to the SIEM once it's introduced - no separate agent needed, since pfSense speaks syslog natively
 
-![](https://github.com/Tmitchy/-SOC-Home-Lab-Build/blob/main/images/pfsense.png)
+![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/pfsense.png)
 
 ---
 #### 🪟 Windows 11 (Endpoint)
@@ -89,7 +89,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 
 - Enable **PowerShell Script Block Logging** (catches obfuscated/malicious scripts)
 
-![](https://github.com/Tmitchy/-SOC-Home-Lab-Build/blob/main/images/Windows%20-%2011.png)
+![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Windows%20-%2011.png)
   
 ---
 
@@ -106,7 +106,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
   - DNS Server log
   - Directory Service log
 
-![](https://github.com/Tmitchy/-SOC-Home-Lab-Build/blob/main/images/Windows-Server%20(DC).png)
+![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Windows-Server%20(DC).png)
 
 ---
 
@@ -122,7 +122,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
   - `syslog`
   - `audit.log`
 
-![](https://github.com/Tmitchy/-SOC-Home-Lab-Build/blob/main/images/Ubuntu%20Server.png)
+![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Ubuntu%20Server.png)
 
 ---
 
@@ -133,7 +133,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 - **Elastic Agent/Defend (Native EDR Telemetry)** forwarding auth
 - Used mainly to practice normalizing Linux vs. Windows log formats once they hit the SIEM
 
-![](https://github.com/Tmitchy/-SOC-Home-Lab-Build/blob/main/images/Ubuntu-Image.png)
+![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Ubuntu-Image.png)
 
 ---
 
