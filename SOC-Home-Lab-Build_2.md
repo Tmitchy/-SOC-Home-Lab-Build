@@ -118,12 +118,11 @@ This is documented in full, including every dead end (a Kibana rendering glitch,
 
 **Goal:** get pfSense's raw syslog output properly parsed and searchable, rather than sitting as one unstructured text blob per event.
 
-**The problem:** pfSense sends multiple message types over the same syslog stream — `filterlog` (firewall block/pass decisions) is CSV-formatted, while DHCP and other system messages are plain text. An initial grok pattern designed for generic syslog text failed to match `filterlog`'s CSV format at all (100% grok failure rate), while a follow-up CSV filter over-applied itself to *every* pfSense message, corrupting the plain-text ones.
+**The problem:** pfSense sends multiple message types over the same syslog stream:  `filterlog` (firewall block/pass decisions) is CSV-formatted, while DHCP and other system messages are plain text. An initial grok pattern designed for generic syslog text failed to match `filterlog`'s CSV format at all (100% grok failure rate), while a follow-up CSV filter over-applied itself to *every* pfSense message, corrupting the plain-text ones.
 
 **The fix:**
-- Added a `csv` filter scoped specifically to `process.name == "filterlog"`, parsing fields like `action`, `src_ip`, `dst_ip`, `protocol`, `interface` — left every other pfSense message type (DHCP, system) untouched
-- Explicitly set `[data_stream][dataset]` via `mutate { replace => ... }` (not `add_field`, which appends rather than overwrites) so pfSense events route to their own `logs-pfsense-default` data stream instead of falling into the generic Beats-destined index
-- Moved the Elasticsearch password out of plaintext config entirely, into Logstash's built-in keystore (`${ES_PASSWORD}`), after an earlier password ended up exposed in troubleshooting output and had to be rotated
+- Added a `csv` filter scoped specifically to `process.name == "filterlog"`, parsing fields like `action`, `src_ip`, `dst_ip`, `protocol`, `interface`, leaving every other pfSense message type (DHCP, system) untouched.
+- Explicitly set `[data_stream][dataset]` via `mutate { replace => ... }` (not `add_field`, which appends rather than overwrites) so pfSense events route to their own `logs-pfsense-default` data stream instead of falling into the generic Beats-destined index.
 
 **Confirmed working:** live firewall block events (e.g. a blocked broadcast packet from a stale old-network IP hitting the new lab subnet) now land in Elasticsearch with fully parsed fields, correctly separated from unrelated DHCP/system chatter.
 
@@ -134,25 +133,25 @@ This is documented in full, including every dead end (a Kibana rendering glitch,
 ### 🪟 Windows 11 (Endpoint)
 **Goal:** Capture process creation, network connections, and user activity at the endpoint level.
 
-- Install **Sysmon** with a solid config (e.g. SwiftOnSecurity or Olaf Hartong's config) to log:
+- Installed **Sysmon** with a solid config (e.g. SwiftOnSecurity or Olaf Hartong's config) to log:
   - Process creation (Event ID 1)
   - Network connections (Event ID 3)
   - Image/DLL loads (Event ID 7)
 - Enable **PowerShell Script Block Logging** (catches obfuscated/malicious scripts)
-- Log shipping handled by **Fleet-managed Elastic Agent** (see SIEM Introduction section above) — the *Windows* integration in Fleet is configured to collect:
+- Log shipping handled by **Fleet-managed Elastic Agent** (see SIEM Introduction section above). The *Windows* integration in Fleet is configured to collect:
   - Security log
-  - Sysmon operational log (once Sysmon is installed — added as a custom event log channel in the integration config)
+  - Sysmon operational log (once Sysmon is installed and added as a custom event log channel in the integration config)
   - PowerShell operational log
 
 ---
 
 ### 🪟 Windows Server (Domain Controller)
-**Goal:** Capture authentication and directory-service events — the backbone of most SOC detections.
+**Goal:** Capture authentication and directory-service events- the backbone of most SOC detections.
 
 - Enable **Advanced Audit Policy** (not just legacy auditing):
   - Logon/Logoff events (4624, 4625, 4634)
   - Account management (4720, 4726, etc.)
-  - Kerberos ticket events (4768, 4769) — useful for later detecting things like Kerberoasting
+  - Kerberos ticket events (4768, 4769) useful for later detecting things like Kerberoasting
 - Enable **DNS debug/analytic logging** for visibility into resolution requests
 - Enrolled under a **dedicated Fleet policy** (`Windows Server (DC) policy`), separate from the Windows 11 endpoint policy, since a DC needs different event log channels. The *Windows* integration on this policy adds custom channels on top of the defaults:
   - Directory Service log
@@ -165,7 +164,7 @@ This is documented in full, including every dead end (a Kibana rendering glitch,
 **Goal:** Capture authentication, privilege escalation, and service-level activity.
 
 - Configure **rsyslog** to centralize local logs (`/var/log/auth.log`, `/var/log/syslog`)
-- Install **auditd** for deeper visibility:
+- Installed **auditd** for deeper visibility:
   - `sudo`/`su` usage
   - File integrity on sensitive paths (`/etc/passwd`, `/etc/shadow`)
 - This host also runs the Elastic Stack itself, so its own **Elastic Agent** (Fleet Server) uses the default **System** integration for baseline metrics — the *Auditd* integration will be added on top for the deeper visibility above
@@ -176,13 +175,12 @@ This is documented in full, including every dead end (a Kibana rendering glitch,
 **Goal:** A lighter-weight Linux endpoint for comparison against the Windows 11 box.
 
 - Same **rsyslog** baseline as the server
-- Once enrolled, **Elastic Agent** via Fleet with the *System* integration covers auth and syslog
-- Standalone Filebeat was installed early on before the Fleet approach was settled — since removed to avoid duplicate data alongside the Elastic Agent integration
+- Once enrolled, **Elastic Agent** via Fleet with the *System* integration covers auth and syslogn
 - Used mainly to practice normalizing Linux vs. Windows log formats once they hit the SIEM
 
 ---
 
-## ✅ Readiness Checklist — Stage 1 (Environment Build)
+## ✅ Readiness Checklist - Stage 1 (Environment Build)
 
 - [x] pfSense deployed with default-deny rules and logging enabled
 - [x] Sysmon installed & configured on Windows 11
@@ -191,7 +189,7 @@ This is documented in full, including every dead end (a Kibana rendering glitch,
 - [x] All VMs confirmed reachable on the internal lab network (5 originally planned, 6th — Ubuntu Image — found already enrolled)
 - [x] Static IPs assigned to each VM for consistent log source identification
 
-## ✅ Readiness Checklist — Stage 2 (SIEM Live)
+## ✅ Readiness Checklist - Stage 2 (SIEM Live)
 
 - [x] Elasticsearch installed, secured, and reachable over HTTPS
 - [x] Kibana installed and trusting Elasticsearch's CA
@@ -202,58 +200,15 @@ This is documented in full, including every dead end (a Kibana rendering glitch,
 - [x] Standalone Winlogbeat/Filebeat uninstalled to avoid duplicate data with Fleet-managed agents
 - [x] Sysmon channel added to Windows integration config
 - [x] Auditd integration added on Ubuntu Server
-- [ ] Fleet Server's self-signed cert on port 8220 reissued using the lab CA (currently using `--insecure` for new enrollments as a workaround)
-- [x] Logstash pipeline confirmed working — parsing and routing pfSense syslog into its own data stream
-- [x] First Kibana dashboard built from live data ("SOC Lab Overview" — traffic over time, top blocked IPs, protocol breakdown, recent events table)
+- [x] Logstash pipeline confirmed working, parsing and routing pfSense syslog into its own data stream
+- [ ] First Kibana dashboard built from live data ("SOC Lab Overview" — traffic over time, top blocked IPs, protocol breakdown, recent events table)
 - [ ] First detection rule created
-- [x] Silent ~4-week SIEM outage discovered, root-caused, and fixed (stale `ca_trusted_fingerprint` in `kibana.yml`)
-- [x] Exposed Elasticsearch password rotated and moved into Logstash's secrets keystore
-
----
-
-## 📚 Resources I'm Using
-
-### Sysmon & Windows Logging
-- [Sysmon (Microsoft Sysinternals)](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
-- [SwiftOnSecurity Sysmon Config](https://github.com/SwiftOnSecurity/sysmon-config)
-- [Olaf Hartong's Sysmon Modular Config](https://github.com/olafhartong/sysmon-modular)
-- [Microsoft — Advanced Audit Policy Configuration](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/audit-policy-recommendations)
-- [Windows Security Event Log Encyclopedia (Ultimate Windows Security)](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
-
-### Linux Logging
-- [rsyslog Documentation](https://www.rsyslog.com/doc/)
-- [Linux auditd Guide (Red Hat)](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening)
-
-### Log Shipping (Elastic Stack)
-- [Elastic Agent Reference](https://www.elastic.co/guide/en/fleet/current/elastic-agent-installation-configuration.html)
-- [Fleet and Elastic Agent Guide](https://www.elastic.co/guide/en/fleet/current/fleet-server.html)
-- [Elastic — Ingesting Windows Event Logs](https://www.elastic.co/guide/en/beats/winlogbeat/current/how-winlogbeat-works.html)
-
-### Log Parsing & Routing (Logstash)
-- [Logstash CSV Filter Plugin](https://www.elastic.co/guide/en/logstash/current/plugins-filters-csv.html)
-- [Logstash Syslog Input Plugin](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-syslog.html)
-- [Logstash Keystore (Secrets Management)](https://www.elastic.co/guide/en/logstash/current/keystore.html)
-- [pfSense filterlog Format Reference](https://docs.netgate.com/pfsense/en/latest/monitoring/filter-log-format-example.html)
-
-### Firewall
-- [pfSense Official Documentation](https://docs.netgate.com/pfsense/en/latest/)
-- [pfSense Syslog / Remote Logging Setup](https://docs.netgate.com/pfsense/en/latest/monitoring/syslog.html)
-
-### Networking & Lab Setup
-- [VirtualBox Networking Modes Explained](https://www.virtualbox.org/manual/ch06.html)
-- [Active Directory Home Lab Setup Guide](https://adsecurity.org/?page_id=41)
-
-### Detection Engineering (for later phases)
-- [MITRE ATT&CK Framework](https://attack.mitre.org/)
-- [Sigma Rules Repository](https://github.com/SigmaHQ/sigma)
-
-> This list will keep growing as the lab progresses — new resources get added as I hit new problems.
 
 ---
 
 ## 🔜 Next Document: Detection Engineering
 
-With the full pipeline confirmed working end to end — firewall through dashboard — the next phase covers enabling Advanced Audit Policy on the DC, reissuing Fleet Server's self-signed listener cert to drop the remaining `--insecure` workaround, and writing the first detection rules mapped to MITRE ATT&CK using real data this lab now generates.
+After confirming the full pipeline works end-to-end with the firewall through the dashboard, the next phase involves enabling the Advanced Audit Policy on the Domain Controller and writing the first detection rules that are mapped to MITRE ATT&CK using real data generated by this lab.
 
 ---
 
