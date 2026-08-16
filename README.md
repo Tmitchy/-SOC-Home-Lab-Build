@@ -61,9 +61,9 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 
 ### ⚙️ Per-OS Configuration Plan
 
-#### 🔥 Firewall — Perimeter Configuration & Logging
+#### 🔥 Firewall - Perimeter Configuration & Logging
 
-**Goal:** Every packet that reaches an endpoint passes through here first — this is the earliest point in the lab where I can see attempted access, not just what already landed on a host.
+**Goal:** Every packet that reaches an endpoint passes through here first - this is the earliest point in the lab where I can see attempted access, not just what already landed on a host.
 
 - Deploying **pfSense** as a virtual appliance, sitting between the lab's internal network and the outside (host-only/NAT boundary)
 - Configuring baseline **firewall rules**:
