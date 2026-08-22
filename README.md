@@ -140,10 +140,10 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 ### ✅ Progress... - Stage 1 (before SIEM is introduced)
 
 - [x] Elastic Agent/Defend (Native EDR Telemetry) installed & configured on Windows 11
-- [ ] Sysmon installed & configured on Windows 11
-- [ ] Advanced Audit Policy enabled on Windows Server
+- [x] Sysmon installed & configured on Windows 11
+- [x] Advanced Audit Policy enabled on Windows Server
 - [x] Elastic Agent/Defend (Native EDR Telemetry) installed on both Windows boxes
-- [ ] auditd installed & rules applied on Ubuntu Server
+- [x] auditd installed & rules applied on Ubuntu Server
 - [x] Elastic Agent/Defend (Native EDR Telemetry) installed on both Ubuntu boxes
 - [x] All 5 VMs confirmed reachable on the internal lab network
 - [x] Static IPs assigned to each VM for consistent log source identification
