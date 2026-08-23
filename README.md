@@ -153,7 +153,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 ### 📚 Resources I'm Using
 
 #### Windows Logging
-- [Microsoft — Advanced Audit Policy Configuration](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/audit-policy-recommendations)
+- [Microsoft - Advanced Audit Policy Configuration](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/audit-policy-recommendations)
 - [Windows Security Event Log Encyclopedia (Ultimate Windows Security)](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 
 #### Linux Logging
@@ -161,7 +161,7 @@ The SIEM box itself isn't built in this phase yet; it's about making sure every 
 - [Linux auditd Guide (Red Hat)](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening)
 
 #### Log Shipping (Elastic Stack)
-- [Elastic — Ingesting Windows Event Logs](https://www.elastic.co/guide/en/beats/winlogbeat/current/how-winlogbeat-works.html)
+- [Elastic - Ingesting Windows Event Logs](https://www.elastic.co/guide/en/beats/winlogbeat/current/how-winlogbeat-works.html)
 
 #### Networking & Lab Setup
 - [VirtualBox Networking Modes Explained](https://www.virtualbox.org/manual/ch06.html)
