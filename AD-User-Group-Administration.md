@@ -11,7 +11,7 @@
 
 ## 📋 Purpose
 
-This document covers the core identity-management skills practiced on the Domain Controller in my home SOC lab: creating and organizing users, structuring Organizational Units (OUs), managing group membership, and handling account lifecycle actions like disabling and re-enabling accounts. This is foundational AD administration — the kind of work that underpins almost every identity-related security event a SOC investigates (account lockouts, privilege changes, suspicious group membership).
+This document covers the core identity-management skills practiced on the Domain Controller in my home SOC lab: creating and organizing users, structuring Organizational Units (OUs), managing group membership, and handling account lifecycle actions like disabling and re-enabling accounts. This is foundational AD administration, the kind of work that underpins almost every identity-related security event a SOC investigates (account lockouts, privilege changes, suspicious group membership).
 
 ---
 
@@ -21,17 +21,17 @@ This document covers the core identity-management skills practiced on the Domain
 
 ### Creating a user
 Via **Active Directory Users and Computers (ADUC)**:
-1. Right-click the target OU → **New → User**
-2. Fill in First name, Last name, and a logon name (`sAMAccountName`) — this becomes the user's domain login
-3. Set an initial password, and choose whether the user must change it at next logon (recommended for real onboarding scenarios)
+1. I right-clicked the target OU > **New > User**
+2. Filled in First name, Last name, and a logon name (`Fred`); this became the user's domain login
+3. Set an initial password and choose whether the user must change it at next logon (recommended for real onboarding scenarios)
 
 Via **PowerShell** (the more scalable, scriptable approach):
 ```powershell
-New-ADUser -Name "Jane Doe" `
-  -GivenName "Jane" -Surname "Doe" `
-  -SamAccountName "jdoe" `
-  -UserPrincipalName "jdoe@soc.local" `
-  -Path "OU=Employees,DC=soc,DC=local" `
+New-ADUser -Name "Fred Doe" `
+  -GivenName "Fred" -Surname "Doe" `
+  -SamAccountName "Fred" `
+  -UserPrincipalName "Fred@soc.lab" `
+  -Path "OU=Employees,DC=soc,DC=lab" `
   -AccountPassword (ConvertTo-SecureString "TempPass123!" -AsPlainText -Force) `
   -Enabled $true `
   -ChangePasswordAtLogon $true
@@ -40,8 +40,8 @@ New-ADUser -Name "Jane Doe" `
 ### Key attributes worth knowing
 | Attribute | Purpose |
 |---|---|
-| `sAMAccountName` | Legacy logon name, still used domain-wide (e.g. `SOC\jdoe`) |
-| `userPrincipalName` | Modern logon format (`jdoe@soc.local`) |
+| `sAMAccountName` | Legacy logon name, still used domain-wide (e.g. `SOC\Fred`) |
+| `userPrincipalName` | Modern logon format (`Fred@soc.local`) |
 | `distinguishedName` | Full LDAP path identifying the object's exact location in the directory |
 | `memberOf` | Groups the user belongs to |
 
@@ -49,12 +49,12 @@ New-ADUser -Name "Jane Doe" `
 
 ## 🗂️ Organizational Units (OUs)
 
-**What an OU is:** a container used to organize objects (users, computers, groups) within a domain — primarily for applying **Group Policy** and delegating administrative control, not for security permissions directly (that's what groups are for).
+**What an OU is:** a container used to organize objects (users, computers, groups) within a domain primarily for applying **Group Policy** and delegating administrative control, not for security permissions directly (that's what groups are for).
 
 ### Why OU structure matters
 A well-planned OU hierarchy lets you:
-- Apply different Group Policy Objects (GPOs) to different parts of the org (e.g. stricter password policy for an IT OU vs. general staff)
-- Delegate limited admin rights (e.g. a helpdesk group that can reset passwords only within a specific OU)
+- Apply different Group Policy Objects (GPOs) to different parts of the org (e.g., stricter password policy for an IT OU vs. general staff)
+- Delegate limited admin rights (e.g., a helpdesk group that can reset passwords only within a specific OU)
 - Keep the directory navigable as it scales
 
 ### Example structure practiced in this lab
@@ -70,7 +70,7 @@ SOC (domain root)
 
 ### Creating an OU
 ```powershell
-New-ADOrganizationalUnit -Name "Security" -Path "OU=Employees,DC=soc,DC=local"
+New-ADOrganizationalUnit -Name "Security" -Path "OU=Employees,DC=soc,DC=lab"
 ```
 
 ---
@@ -94,9 +94,9 @@ New-ADOrganizationalUnit -Name "Security" -Path "OU=Employees,DC=soc,DC=local"
 
 ### Creating a group and adding members
 ```powershell
-New-ADGroup -Name "SOC-Analysts" -GroupScope Global -GroupCategory Security -Path "OU=Security,OU=Employees,DC=soc,DC=local"
+New-ADGroup -Name "SOC-Analysts" -GroupScope Global -GroupCategory Security -Path "OU=Security,OU=Employees,DC=soc,DC=lab"
 
-Add-ADGroupMember -Identity "SOC-Analysts" -Members "jdoe"
+Add-ADGroupMember -Identity "SOC-Analysts" -Members "Fred"
 ```
 
 ### Checking group membership
@@ -108,32 +108,32 @@ Get-ADGroupMember -Identity "SOC-Analysts"
 
 ## ⏸️ Account Lifecycle: Disabling, Suspending & Re-Enabling
 
-**Why this matters for security, not just IT admin:** a disabled-but-not-deleted account is a standard practice for offboarding — it preserves the object (and its history/permissions for auditing) while immediately cutting off access. Suspended accounts unexpectedly *re-enabling*, or disabled accounts still showing successful logon attempts, are both meaningful signals a SOC would investigate.
+**Why this matters for security, not just IT admin:** A disabled-but-not-deleted account is a standard practice for offboarding; it preserves the object (and its history/permissions for auditing) while immediately cutting off access. Suspended accounts unexpectedly *re-enabling*, or disabled accounts still showing successful logon attempts, are both meaningful signals a SOC would investigate.
 
 ### Disabling a user account
 ```powershell
 Disable-ADAccount -Identity "jdoe"
 ```
-Via ADUC: right-click the user → **Disable Account**
+Via ADUC: right-click the user > **Disable Account**
 
 ### Re-enabling
 ```powershell
 Enable-ADAccount -Identity "jdoe"
 ```
 
-### Locking vs. Disabling — an important distinction
+### Locking vs. Disabling: an important distinction
 | Action | Meaning | Who can undo it |
 |---|---|---|
 | **Locked out** | Automatic, triggered by repeated failed login attempts (a security control against brute-force) | Auto-unlocks after a timeout, or an admin can force it via `Unlock-ADAccount` |
-| **Disabled** | Deliberate admin action — account cannot authenticate at all until re-enabled | Only an admin, explicitly |
+| **Disabled** | Deliberate admin action; the account cannot authenticate at all until re-enabled | Only an admin, explicitly |
 
 ```powershell
-Unlock-ADAccount -Identity "jdoe"
+Unlock-ADAccount -Identity "Fred"
 ```
 
 ### Checking account status
 ```powershell
-Get-ADUser -Identity "jdoe" -Properties Enabled, LockedOut, PasswordExpired
+Get-ADUser -Identity "Fred" -Properties Enabled, LockedOut, PasswordExpired
 ```
 
 ---
@@ -152,17 +152,21 @@ Every action documented above generates a corresponding **Windows Security event
 | Group membership added | 4728 / 4732 / 4756 (depending on group type) |
 | Password reset | 4724 |
 
-Understanding what "normal" AD administration looks like — and what generates which event — is the foundation for later recognizing what *abnormal* looks like: unexpected account creation outside business hours, a disabled account suddenly re-enabled, or unusual group membership changes (e.g. a standard user added to Domain Admins).
+Understanding what "normal" AD administration looks like and what generates which event is the foundation for later recognizing what *abnormal* looks like: unexpected account creation outside business hours, a disabled account suddenly re-enabled, or unusual group membership changes (e.g., a standard user added to Domain Admins).
 
 ---
 
 ## 📚 Resources
 
-- [Microsoft — Active Directory Users and Computers Overview](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/adac/active-directory-administrative-center)
-- [Microsoft — AD PowerShell Module Reference](https://learn.microsoft.com/en-us/powershell/module/activedirectory/)
-- [Microsoft — Group Scope Explained](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups)
-- [Ultimate Windows Security — 4720-4767 Event ID Reference](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
+- [Microsoft Active Directory Users and Computers Overview](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/adac/active-directory-administrative-center)
+- [Microsoft AD PowerShell Module Reference](https://learn.microsoft.com/en-us/powershell/module/activedirectory/)
+- [Microsoft Group Scope Explained](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups)
+- [Ultimate Windows Security 4720-4767 Event ID Reference](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
 
 ---
 
-<p align="center"><i>Part of the SOC Home Lab documentation series — companion to the Active Directory & SIEM integration write-up.</i></p>
+<p align="center"><i>Part of the SOC Home Lab documentation series, companion to the Active Directory & SIEM integration write-up.</i></p>
+
+---
+
+> 📖 For a deeper look at AD user/group administration and account lifecycle management, see [AD User & Group Administration](./AD-User-Group-Administration.md)
