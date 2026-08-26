@@ -112,13 +112,13 @@ Get-ADGroupMember -Identity "SOC-Analysts"
 
 ### Disabling a user account
 ```powershell
-Disable-ADAccount -Identity "jdoe"
+Disable-ADAccount -Identity "Fred"
 ```
 Via ADUC: right-click the user > **Disable Account**
 
 ### Re-enabling
 ```powershell
-Enable-ADAccount -Identity "jdoe"
+Enable-ADAccount -Identity "Fred"
 ```
 
 ### Locking vs. Disabling: an important distinction
