@@ -83,7 +83,7 @@ New-ADOrganizationalUnit -Name "Security" -Path "OU=Employees,DC=soc,DC=lab"
 | Type | Purpose |
 |---|---|
 | **Security groups** | Used to assign permissions to resources (file shares, applications, etc.) |
-| **Distribution groups** | Used for email distribution lists only — no security function |
+| **Distribution groups** | Used for email distribution lists only; no security function |
 
 ### Group scopes
 | Scope | Can contain | Typically used for |
@@ -166,7 +166,3 @@ Understanding what "normal" AD administration looks like and what generates whic
 ---
 
 <p align="center"><i>Part of the SOC Home Lab documentation series, companion to the Active Directory & SIEM integration write-up.</i></p>
-
----
-
-> 📖 For a deeper look at AD user/group administration and account lifecycle management, see [AD User & Group Administration](./AD-User-Group-Administration.md)
