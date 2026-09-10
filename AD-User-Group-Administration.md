@@ -164,8 +164,11 @@ During this exercise, a 4732 event showed **`ANONYMOUS LOGON`** as the Subject p
 
 - ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Configuring_BadBlood.png)
 
-- - ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Event_Viewer.png)
+- ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Event_Viewer.png)
 
+- ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Investigating-events-generated-by-the-BadBlood-process.png)
+
+- ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Viewing-DC-01-EVENTS-on-Kibana.png)
 
 ---
 
