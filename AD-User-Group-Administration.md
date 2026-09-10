@@ -162,7 +162,7 @@ During this exercise, a 4732 event showed **`ANONYMOUS LOGON`** as the Subject p
 
 **The actual lesson:** the event ID alone never tells the whole story; the **Subject**, **timing**, and **surrounding context** are what separate a real finding from noise, and checking the timestamp against known activity windows is often the fastest way to rule something in or out.
 
-- ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Incident-Documentation/main/images/Configuring_BadBlood.png)
+- ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Configuring_BadBlood.png)
 
 
 ---
