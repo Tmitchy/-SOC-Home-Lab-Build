@@ -164,6 +164,8 @@ During this exercise, a 4732 event showed **`ANONYMOUS LOGON`** as the Subject p
 
 - ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Configuring_BadBlood.png)
 
+- - ![](https://raw.githubusercontent.com/Tmitchy/-SOC-Home-Lab-Build/main/images/Event_Viewer.png)
+
 
 ---
 
