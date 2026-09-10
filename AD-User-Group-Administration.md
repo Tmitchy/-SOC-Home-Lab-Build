@@ -142,7 +142,7 @@ Get-ADUser -Identity "Fred" -Properties Enabled, LockedOut, PasswordExpired
 
 ### 🧪 Hands-On Practice: Populating & Observing AD with BadBlood
 
-[BadBlood](https://github.com/davidprowe/BadBlood) is a tool that populates an Active Directory domain with a large volume of randomized, realistic objects—users, groups, OUs, and administrative relationships—simulating the kind of messy, organically grown AD environment a real SOC would encounter, rather than a clean lab default.
+[BadBlood](https://github.com/davidprowe/BadBlood) is a tool that populates an Active Directory domain with a large volume of randomized, realistic objects-users, groups, OUs, and administrative relationships- simulating the kind of messy, organically grown AD environment a real SOC would encounter, rather than a clean lab default.
 
 #### What I practiced
 - Running BadBlood against this lab's DC to bulk-create users, groups, and admin-level objects
