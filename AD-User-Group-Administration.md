@@ -138,6 +138,32 @@ Get-ADUser -Identity "Fred" -Properties Enabled, LockedOut, PasswordExpired
 
 ---
 
+## 🔐 Identity & Access Management (IAM) Fundamentals
+
+### 🧪 Hands-On Practice: Populating & Observing AD with BadBlood
+
+[BadBlood](https://github.com/davidprowe/BadBlood) is a tool that populates an Active Directory domain with a large volume of randomized, realistic objects—users, groups, OUs, and administrative relationships—simulating the kind of messy, organically grown AD environment a real SOC would encounter, rather than a clean lab default.
+
+#### What I practiced
+- Running BadBlood against this lab's DC to bulk-create users, groups, and admin-level objects
+- Watching the resulting Security event volume in both **Windows Event Viewer** and **Kibana**, and learning to tell genuine signal from expected bulk-tool noise
+- Cross-referencing Sysmon process-creation events (Event ID 1) against Security log events to connect *what ran* with *what changed in AD*
+
+#### Event codes to actually watch for (confirmed generated during this exercise)
+| Event ID | Meaning | Why it matters |
+|---|---|---|
+| **4720** | User account created | Bulk creation shows as a rapid burst; a single 4720 outside expected onboarding activity is worth a look |
+| **4732 / 4728 / 4756** | Member added to a security-enabled group | The most important one to watch closely, especially who/what acted |
+| **4624 / 4634** | Logon / Logoff | Extremely high volume under normal conditions; useful for correlation, not for alerting on its own |
+| **4738** | User account changed | Flags attribute-level modifications, not just membership changes |
+
+#### A genuine finding worth documenting: unusual Subject on a group change
+During this exercise, a 4732 event showed **`ANONYMOUS LOGON`** as the Subject performing a group membership change, adding `Domain Guests` to `BUILTIN\Guests`. In isolation, that's a legitimate detection concern (unauthenticated identity performing a privileged action); in this specific case, it was traced back to BadBlood's own automated execution, not a real anomaly. Also encountered a separate, older 4732 event (`Authenticated Users` added to `Pre-Windows 2000 Compatible Access`) that turned out to be a **false lead**, a default configuration artifact from initial DC promotion, confirmed by its timestamp predating the BadBlood run entirely.
+
+**The actual lesson:** the event ID alone never tells the whole story; the **Subject**, **timing**, and **surrounding context** are what separate a real finding from noise, and checking the timestamp against known activity windows is often the fastest way to rule something in or out.
+
+---
+
 ## 🔍 Why This Matters for SOC Work
 
 Every action documented above generates a corresponding **Windows Security event**, now flowing into this lab's SIEM via the DC's Advanced Audit Policy configuration:
